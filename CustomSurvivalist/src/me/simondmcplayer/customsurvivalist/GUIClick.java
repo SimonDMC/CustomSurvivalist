@@ -3,12 +3,16 @@ package me.simondmcplayer.customsurvivalist;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.FireworkEffect.Type;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Spider;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -219,6 +223,12 @@ public class GUIClick implements Listener {
 						player.setGameMode(GameMode.SPECTATOR);
 					}
 					player.sendMessage(ChatColor.GREEN + "Timer started!");
+				}
+				
+				for (Entity e : event.getWhoClicked().getWorld().getEntities()) {
+					if (e instanceof Zombie) e.remove();
+					if (e instanceof Skeleton) e.remove();
+					if (e instanceof Spider) e.remove();
 				}
 				
 				s = 0;
