@@ -42,3 +42,6 @@ You never have to reset the world as you can always teleport to a random locatio
 This plugin uses only one command: /svh
 
 It opens up a GUI with all necessary settings and the start button.
+
+## Credit
+CustomSurvivalist was of course inspired by Dream's video Minecraft Survivalist VS 3 Hitmen.
