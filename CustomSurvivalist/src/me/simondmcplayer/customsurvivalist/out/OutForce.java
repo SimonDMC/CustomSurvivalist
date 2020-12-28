@@ -32,6 +32,7 @@ public class OutForce implements Listener {
 			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 1000000, 5));
 			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 1000000, 200));
 			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.POISON, 1000000, 0));
+			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1000000, 10));
 		}
 	}
 	
@@ -51,6 +52,7 @@ public class OutForce implements Listener {
 			event.getPlayer().removePotionEffect(PotionEffectType.SLOW);
 			event.getPlayer().removePotionEffect(PotionEffectType.JUMP);
 			event.getPlayer().removePotionEffect(PotionEffectType.POISON);
+			event.getPlayer().removePotionEffect(PotionEffectType.HUNGER);
 			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 1000000, 0));
 		}
 	}
