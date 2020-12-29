@@ -32,8 +32,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import me.simondmcplayer.customsurvivalist.GUIClick;
 import me.simondmcplayer.customsurvivalist.Main;
+import me.simondmcplayer.customsurvivalist.config.GUIClick;
 
 public class Game implements Listener {
 	

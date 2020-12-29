@@ -7,7 +7,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.simondmcplayer.customsurvivalist.cmd.Cmd;
+import me.simondmcplayer.customsurvivalist.config.GUIClick;
 import me.simondmcplayer.customsurvivalist.config.NumGUIClick;
+import me.simondmcplayer.customsurvivalist.config.SettingsGUIClick;
 import me.simondmcplayer.customsurvivalist.game.Game;
 import me.simondmcplayer.customsurvivalist.game.Particles;
 import me.simondmcplayer.customsurvivalist.out.Out1;
@@ -34,6 +36,7 @@ public class Main extends JavaPlugin implements Listener {
 		this.getServer().getPluginManager().registerEvents(new Up2(), this);
 		this.getServer().getPluginManager().registerEvents(new Game(), this);
 		this.getServer().getPluginManager().registerEvents(new NumGUIClick(), this);
+		this.getServer().getPluginManager().registerEvents(new SettingsGUIClick(), this);
 		Game.game();
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			Bukkit.getScheduler().cancelTask(Particles.p);

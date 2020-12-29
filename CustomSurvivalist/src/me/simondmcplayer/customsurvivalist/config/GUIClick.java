@@ -1,4 +1,4 @@
-package me.simondmcplayer.customsurvivalist;
+package me.simondmcplayer.customsurvivalist.config;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -22,8 +22,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import me.simondmcplayer.customsurvivalist.config.GUI;
-import me.simondmcplayer.customsurvivalist.config.NumGUI;
+import me.simondmcplayer.customsurvivalist.Main;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -205,6 +204,7 @@ public class GUIClick implements Listener {
 		
 		if (event.getSlot() == 40) {
 			if (!game) {
+				boolean glow = (Main.getData().get("data.glow") == null ? true : Main.getData().getBoolean("data.glow"));
 				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 					player.getInventory().clear();
 					player.setHealth(player.getMaxHealth());
@@ -214,7 +214,8 @@ public class GUIClick implements Listener {
 					player.setExp(0);
 					player.setLevel(0);
 					if (player.getScoreboardTags().contains("s")) {
-						player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 1000000, 0));
+						if (glow)
+							player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 1000000, 0));
 					}
 					if (player.getScoreboardTags().contains("h")) {
 						player.getInventory().setItem(8, new ItemStack(Material.COMPASS));
@@ -276,12 +277,15 @@ public class GUIClick implements Listener {
 						}
 							
 						String s0 = (s < 10 ? "0" : "") + s;
-							
+						
+						boolean showtimer = (Main.getData().get("data.showtimer") == null ? true : Main.getData().getBoolean("data.showtimer"));
 						for (Player p : Bukkit.getOnlinePlayers()) {
-							if (gt > 0) {
-								p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.AQUA + String.valueOf(m) + ":" + String.valueOf(s0)));
-							} else {
-								p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + String.valueOf(m) + ":" + String.valueOf(s0)));
+							if (showtimer) {
+								if (gt > 0) {
+									p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.AQUA + String.valueOf(m) + ":" + String.valueOf(s0)));
+								} else {
+									p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + String.valueOf(m) + ":" + String.valueOf(s0)));
+								}
 							}
 						}
 							
@@ -333,14 +337,8 @@ public class GUIClick implements Listener {
 		}
 		
 		if (event.getSlot() == 53) {
-			boolean on = (Main.getData().get("data.on") == null ? true : Main.getData().getBoolean("data.on"));
-			if (on)
-				Main.getData().set("data.on", false);
-			if (!on)
-				Main.getData().set("data.on", true);
-			Main.saveData();
-			GUI.createInventory((Player) event.getWhoClicked());
-			event.getWhoClicked().openInventory(GUI.inv);
+			SettingsGUI.createInventory((Player) event.getWhoClicked());
+			event.getWhoClicked().openInventory(SettingsGUI.settingsinv);
 		}
 		
 		if (event.getSlot() == 0) {

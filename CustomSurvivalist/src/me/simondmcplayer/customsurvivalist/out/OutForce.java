@@ -14,6 +14,12 @@ public class OutForce implements Listener {
 	@EventHandler
 	public void giveBigSlowness(PlayerMoveEvent event) {
 		Integer cx, cz;
+		
+		boolean on = (Main.getData().get("data.on") == null ? true : Main.getData().getBoolean("data.on"));
+		if (!on) return;
+		boolean lastborder = (Main.getData().get("data.lastborder") == null ? true : Main.getData().getBoolean("data.lastborder"));
+		if (!lastborder) return;
+		
 		cx = (Main.getData().get("data.cx") == null ? 0 : (Integer) Main.getData().get("data.cx"));
 		cz = (Main.getData().get("data.cz") == null ? 0 : (Integer) Main.getData().get("data.cz"));
 		if ((event.getTo().getX()-cx > 500 && event.getFrom().getX()-cx < 500) || (event.getTo().getZ()-cz > 500 && event.getFrom().getZ()-cz < 500) || (event.getTo().getX()-cx < -499 && event.getFrom().getX()-cx > -499) || (event.getTo().getZ()-cz < -499 && event.getFrom().getZ()-cz > -499)) {

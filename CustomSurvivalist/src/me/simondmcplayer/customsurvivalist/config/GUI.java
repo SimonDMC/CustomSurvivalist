@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import me.simondmcplayer.customsurvivalist.GUIClick;
 import me.simondmcplayer.customsurvivalist.Main;
 
 public class GUI {
@@ -204,24 +203,15 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(41, i);
 		
-		boolean on = (Main.getData().get("data.on") == null ? true : Main.getData().getBoolean("data.on"));
-		if (on) {
-			i = new ItemStack(Material.LIME_DYE);
-			m.setDisplayName(ChatColor.GREEN + "Enabled");
-			l.clear();
-			l.add(ChatColor.translateAlternateColorCodes('&', "&7Disable checks for passing"));
-			l.add(ChatColor.translateAlternateColorCodes('&', "&7the boundaries."));
-			l.add(ChatColor.translateAlternateColorCodes('&', "&7"));
-			l.add(ChatColor.translateAlternateColorCodes('&', "&eClick to disable!"));
-		} else {
-			i = new ItemStack(Material.GRAY_DYE);
-			m.setDisplayName(ChatColor.RED + "Disabled");
-			l.clear();
-			l.add(ChatColor.translateAlternateColorCodes('&', "&7Enable checks for passing"));
-			l.add(ChatColor.translateAlternateColorCodes('&', "&7the boundaries."));
-			l.add(ChatColor.translateAlternateColorCodes('&', "&7"));
-			l.add(ChatColor.translateAlternateColorCodes('&', "&eClick to enable!"));
-		}
+		i = new ItemStack(Material.REDSTONE_TORCH);
+		m.setDisplayName(ChatColor.GREEN + "Settings");
+		l.clear();
+		l.add(ChatColor.translateAlternateColorCodes('&', "&7Open a submenu for various"));
+		l.add(ChatColor.translateAlternateColorCodes('&', "&7toggles, such as disabling"));
+		l.add(ChatColor.translateAlternateColorCodes('&', "&7boundary checks, glowing,"));
+		l.add(ChatColor.translateAlternateColorCodes('&', "&7particles and more."));
+		l.add(ChatColor.translateAlternateColorCodes('&', "&7"));
+		l.add(ChatColor.translateAlternateColorCodes('&', "&eClick to open!"));
 		m.setLore(l);
 		i.setItemMeta(m);
 		inv.setItem(53, i);
