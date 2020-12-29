@@ -207,7 +207,7 @@ public class GUIClick implements Listener {
 			if (!game) {
 				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 					player.getInventory().clear();
-					player.setHealth(20);
+					player.setHealth(player.getMaxHealth());
 					player.setFoodLevel((int) 20.0);
 					player.setSaturation(5);
 					player.getActivePotionEffects().clear();
@@ -311,6 +311,12 @@ public class GUIClick implements Listener {
 				player.teleport(event.getWhoClicked().getLocation());
 			}
 			
+			game = false;
+			Bukkit.getScheduler().cancelTask(repeat);
+			for (Player p : Bukkit.getOnlinePlayers()) {
+				p.removePotionEffect(PotionEffectType.GLOWING);
+			}
+			
 			Main.getData().set("data.cx", i1);
 			Main.getData().set("data.cz", i2);
 			Main.saveData();
@@ -380,6 +386,12 @@ public class GUIClick implements Listener {
 				return;
 			}
 		}
+		
+		if (!player.getLocation().getBlock().getType().equals(Material.AIR)) {
+			randomSpread(player);
+			return;
+		}
+		
 		rest(player);
 	}
 	
@@ -388,6 +400,12 @@ public class GUIClick implements Listener {
 		Main.getData().set("data.cz", i2);
 		Main.saveData();
 		player.sendMessage(ChatColor.GREEN + "Set the center to " + Math.round(Math.floor(player.getLocation().getX())) + ", " + Math.round(Math.floor(player.getLocation().getZ())) + "!");
+		
+		game = false;
+		Bukkit.getScheduler().cancelTask(repeat);
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			p.removePotionEffect(PotionEffectType.GLOWING);
+		}
 		
 		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), new Runnable() {
 			
