@@ -10,6 +10,8 @@ import me.simondmcplayer.customsurvivalist.Main;
 
 public class SettingsGUIClick implements Listener {
 
+	// simple class, for each setting it checks if its off and it sets it to on, or the other way around
+	
 	@EventHandler
 	public void onSelect(InventoryClickEvent event) {
 		if (!event.getInventory().equals(SettingsGUI.settingsinv)) return;

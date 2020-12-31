@@ -10,6 +10,8 @@ import me.simondmcplayer.customsurvivalist.Main;
 
 public class Particles {
 	
+	// this class produces all the particles
+	
 	public static int p, cx, cz, o1, o2, o3, u1, u2;
 	static int d = 10;
 	
@@ -35,10 +37,15 @@ public class Particles {
 				boolean lastborder = (Main.getData().get("data.lastborder") == null ? true : Main.getData().getBoolean("data.lastborder"));
 				boolean on = (Main.getData().get("data.on") == null ? true : Main.getData().getBoolean("data.on"));
 				
+				// checks for settings
+				
 				if (particles && on) {
 					// ========== O1 ==========
 					if (renderParticles(cx, cz, o1)) {
 					
+						// honestly this is just nested for loops producting the particles based on the config. it has some math involved, probably won't explain it
+						// here. if you're interested in how it works contact me on discord SimonDMCPlayer#6662 :D
+						
 						// SOUTH
 						for (int y = 200; y > 0; y--) {
 							for (int x = cx - o1; x < cx + o1; x++) {
@@ -204,6 +211,7 @@ public class Particles {
 		}, 0, 5);
 	}
 	
+	// this tests if any player is close to a location within d blocks (static int d = 10;)
 	public static boolean isPlayerClose(double x, double y, double z) {
 		
 		for (Player p : Bukkit.getOnlinePlayers()) {
@@ -214,6 +222,7 @@ public class Particles {
 		return false;
 	}
 	
+	// this checks if any player is close to a border at all, implemented mostly because of optimization
 	public static boolean renderParticles(int cx, int cz, int dist) {
 		
 		for (Player p : Bukkit.getOnlinePlayers()) {

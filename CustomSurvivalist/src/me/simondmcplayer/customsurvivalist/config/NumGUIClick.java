@@ -14,6 +14,8 @@ import me.simondmcplayer.customsurvivalist.Main;
 
 public class NumGUIClick implements Listener {
 	
+	// this class handles all the clicking in numgui, responsible for setting values
+	
 	public static String num = "";
 	
 	@EventHandler
@@ -22,6 +24,7 @@ public class NumGUIClick implements Listener {
 		event.setCancelled(true);
 		if(event.getClickedInventory().getType() == InventoryType.PLAYER) return;
 		
+		// num is a string so it just adds the number to it (if it was an int then 5 += 1 would make 6 but as a string it makes 51)
 		if (event.getSlot() == 10) {
 			num += 1;
 		}
@@ -55,11 +58,15 @@ public class NumGUIClick implements Listener {
 		if (event.getSlot() == 33) {
 			num = "";
 		}
+		
+		// if num has at least one character it erases it, sets the length to one less (backspace)
 		if (event.getSlot() == 37) {
 			 if (num != null && num.length() > 0) {
 			        num = num.substring(0, num.length() - 1);
 			    }
 		}
+		
+		// confirm, if the string isn't empty, it sets the config of the last two characters in the name (Modify o1 for example - takes the o1) to num and tells the player what it did
 		if (event.getSlot() == 39) {
 			if (!(num == "")) {
 				Main.getData().set("data." + event.getView().getTitle().substring(event.getView().getTitle().length() - 2), Integer.parseInt(num));
@@ -70,6 +77,7 @@ public class NumGUIClick implements Listener {
 			event.getWhoClicked().openInventory(GUI.inv);
 		}
 		
+		// updates the paper every time you click with the new num
 		ItemStack i = new ItemStack(Material.PAPER);
 		ItemMeta m = i.getItemMeta();
 		m.setDisplayName(ChatColor.WHITE + num);

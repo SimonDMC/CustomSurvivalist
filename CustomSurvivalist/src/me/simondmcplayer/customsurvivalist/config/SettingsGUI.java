@@ -14,8 +14,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import me.simondmcplayer.customsurvivalist.Main;
 
 public class SettingsGUI {
+	
+	// this class defines the gui for the settings submenu, won't go into everything but just the new stuff
 
-public static Inventory settingsinv;
+	public static Inventory settingsinv;
 	
 	public static void createInventory(Player player) {
 
@@ -26,6 +28,8 @@ public static Inventory settingsinv;
 		ItemMeta m = i.getItemMeta();
 		m.setCustomModelData(5426);
 		List<String> l = new ArrayList<>();
+		
+		// takes on from the config and checks if its on, if so shows the first option, otherwise the second
 		boolean on = (Main.getData().get("data.on") == null ? true : Main.getData().getBoolean("data.on"));
 		if (on) {
 			i = new ItemStack(Material.LIME_DYE);
@@ -46,6 +50,7 @@ public static Inventory settingsinv;
 		i.setItemMeta(m);
 		settingsinv.setItem(20, i);
 		
+		// this repeats with every other setting just with different config names
 		boolean glow = (Main.getData().get("data.glow") == null ? true : Main.getData().getBoolean("data.glow"));
 		if (glow) {
 			i = new ItemStack(Material.LIME_DYE);

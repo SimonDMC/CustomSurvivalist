@@ -9,6 +9,14 @@ import me.simondmcplayer.customsurvivalist.Main;
 
 public class Up1 implements Listener {
 	
+	/*
+	 	Outs and Ups are all basically the same. First they check if the setting is on, then they check if a player moved past the boundary, and they add them a tag. If they
+	 	are a survivalist just tell them "hey you passed this boundary", otherwise tell them what the boundary does and give them the effect (not applicable in some cases).
+	 	The tag is there to check if they are past the boundary, as otherwise we would have to check if they are past x but not z, z but not x, -x but not z, and so on so forth.
+	 	So once they reach the boudary at least once we mark them with a tag. We also check if a player moved ouside the boundary, AND if they have the tag (same reason as above)
+	 	and if so, get rid of the negative effect or just remove the tag.
+	*/
+	
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void broadcastHealth(PlayerMoveEvent event) {

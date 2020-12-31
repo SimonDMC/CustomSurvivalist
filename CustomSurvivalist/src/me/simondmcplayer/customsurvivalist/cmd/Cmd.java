@@ -12,6 +12,8 @@ public class Cmd implements CommandExecutor {
 	
 	public int m, s, repeat;
 	
+	// this class just takes the /svh command, sets up the gui and opens it for the player
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (label.equalsIgnoreCase("svh")) {

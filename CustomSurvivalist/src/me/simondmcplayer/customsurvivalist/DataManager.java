@@ -9,6 +9,8 @@ import java.util.logging.Level;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+// i have absolutely no idea what any of this means but it makes the data.yml work so pretend like i do
+
 public class DataManager {
 	
 	private Main plugin;

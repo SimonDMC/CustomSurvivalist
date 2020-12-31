@@ -17,6 +17,8 @@ import me.simondmcplayer.customsurvivalist.Main;
 
 public class GUI {
 	
+	// this class defines the basic gui
+	
 	public static Inventory inv;
 	
 	public static void createInventory(Player player) {
@@ -25,8 +27,11 @@ public class GUI {
 		int[] slot = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 34, 35, 36, 37, 38, 42, 43, 44, 46, 47, 48, 49, 50, 51, 52};
 		Material[] bed = {Material.WHITE_BED, Material.ORANGE_BED, Material.MAGENTA_BED, Material.LIGHT_BLUE_BED, Material.YELLOW_BED, Material.LIME_BED, Material.PINK_BED, Material.GRAY_BED, Material.LIGHT_GRAY_BED, Material.CYAN_BED, Material.PURPLE_BED, Material.BLUE_BED, Material.BROWN_BED, Material.GREEN_BED, Material.RED_BED, Material.BLACK_BED};
 		
+		// survivalist
 		ItemStack i = new ItemStack(Material.FEATHER);
 		ItemMeta m = i.getItemMeta();
+		
+		// sets the custom model data of all of the icons to 5426 for clearing purposes, used in Game
 		m.setCustomModelData(5426);
 		m.setDisplayName(ChatColor.GREEN + "Survivalist");
 		List<String> l = new ArrayList<>();
@@ -42,6 +47,7 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(11, i);
 		
+		// hitman
 		i = new ItemStack(Material.IRON_SWORD);
 		m.setDisplayName(ChatColor.RED + "Hitman");
 		l.clear();
@@ -59,6 +65,7 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(13, i);
 		
+		// spectator
 		i = new ItemStack(Material.BARRIER);
 		m.setDisplayName(ChatColor.WHITE + "Spectator");
 		l.clear();
@@ -75,6 +82,7 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(15, i);
 		
+		// out 1
 		i = new ItemStack(Material.GRASS);
 		m.setDisplayName(ChatColor.YELLOW + "Modify Out 1");
 		l.clear();
@@ -89,6 +97,7 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(29, i);
 		
+		// out 2
 		i = new ItemStack(Material.GRASS, 2);
 		m.setDisplayName(ChatColor.YELLOW + "Modify Out 2");
 		l.clear();
@@ -102,6 +111,7 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(30, i);
 		
+		// out 3
 		i = new ItemStack(Material.GRASS, 3);
 		m.setDisplayName(ChatColor.YELLOW + "Modify Out 3");
 		l.clear();
@@ -115,6 +125,7 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(31, i);
 		
+		// up 1
 		i = new ItemStack(Material.LADDER);
 		m.setDisplayName(ChatColor.YELLOW + "Modify Up 1");
 		l.clear();
@@ -128,6 +139,7 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(32, i);
 		
+		// up 2
 		i = new ItemStack(Material.LADDER, 2);
 		m.setDisplayName(ChatColor.YELLOW + "Modify Up 2");
 		l.clear();
@@ -141,6 +153,7 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(33, i);
 		
+		// timer and grace (order is a bit shuffled as i was moving icons around)
 		int t = (Main.getData().get("data.t") == null ? 60 : (int) Main.getData().get("data.t"));
 		int g = (Main.getData().get("data.g") == null ? 60 : (int) Main.getData().get("data.g"));
 		i = new ItemStack(Material.CLOCK);
@@ -160,6 +173,7 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(45, i);
 		
+		// radom loc
 		i = new ItemStack(Material.CAMPFIRE);
 		m.setDisplayName(ChatColor.YELLOW + "Set Center to a Random Location");
 		l.clear();
@@ -172,6 +186,8 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(39, i);
 		
+		// start/stop
+		// tests if the game is on, if so displays the stop game, otherwise displays start game, actual logic is defined later in GUIClick
 		if (GUIClick.game) {
 			i = new ItemStack(Material.END_CRYSTAL);
 			m.setDisplayName(ChatColor.YELLOW + "Stop the Game");
@@ -191,7 +207,9 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(40, i);
 		
-		int r = (int) Math.floor(Math.random() * 16);
+		// set center
+		int r = (int) Math.floor(Math.random() * bed.length);
+		// it takes a random bed from the array
 		i = new ItemStack(bed[r]);
 		m.setDisplayName(ChatColor.YELLOW + "Set Center");
 		l.clear();
@@ -203,6 +221,7 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(41, i);
 		
+		// settings
 		i = new ItemStack(Material.REDSTONE_TORCH);
 		m.setDisplayName(ChatColor.GREEN + "Settings");
 		l.clear();
@@ -216,6 +235,7 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(53, i);
 		
+		// credits, will most likely change soon
 		i = new ItemStack(Material.NAME_TAG);
 		m.setDisplayName(ChatColor.YELLOW + "Plugin by SimonDMCPlayer");
 		l.clear();
@@ -227,6 +247,8 @@ public class GUI {
 		i.setItemMeta(m);
 		inv.setItem(0, i);
 		
+		// takes the array of all the remaining slots and fills each one with a pane
+		// ik i can do it with a loop checking if its empty but too late now lol
 		i = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
 		m.setDisplayName(ChatColor.WHITE + "");
 		l.clear();

@@ -27,6 +27,7 @@ public class Main extends JavaPlugin implements Listener {
 	public void onEnable() {
 		data = new DataManager(this);
 		this.getCommand("svh").setExecutor(new Cmd());
+		// registers all listener classes
 		this.getServer().getPluginManager().registerEvents(new GUIClick(), this);
 		this.getServer().getPluginManager().registerEvents(new Out1(), this);
 		this.getServer().getPluginManager().registerEvents(new Out2(), this);
@@ -37,7 +38,11 @@ public class Main extends JavaPlugin implements Listener {
 		this.getServer().getPluginManager().registerEvents(new Game(), this);
 		this.getServer().getPluginManager().registerEvents(new NumGUIClick(), this);
 		this.getServer().getPluginManager().registerEvents(new SettingsGUIClick(), this);
+		
+		// starts repeating task in Game
 		Game.game();
+		
+		// starts particles
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			Bukkit.getScheduler().cancelTask(Particles.p);
 			Particles.displayParticles(p);

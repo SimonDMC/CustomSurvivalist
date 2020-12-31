@@ -37,9 +37,12 @@ import me.simondmcplayer.customsurvivalist.config.GUIClick;
 
 public class Game implements Listener {
 	
+	// this is the class that handles most of the game logic except timer
+	
 	List<Player> informed = new ArrayList<Player>();
 	public static int g;
 	
+	// when a hitman right clicks compass
 	@EventHandler
 	public void onCompassClick(PlayerInteractEvent event) {
 		if (!event.getPlayer().getScoreboardTags().contains("h")) return;
@@ -47,6 +50,8 @@ public class Game implements Listener {
 		if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR)) return;
 		if (!event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COMPASS)) return;
 		Location l = null;
+		
+		// takes a survivalist and gets their location
 		for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 			if (p.getScoreboardTags().contains("s")) {
 				l = p.getLocation();
@@ -57,10 +62,12 @@ public class Game implements Listener {
 			event.getPlayer().sendMessage(ChatColor.RED + "No player found!");
 			return;
 		}
-		event.getPlayer().setCompassTarget(l);
 		
+		// set their compass to track them
+		event.getPlayer().setCompassTarget(l);
 	}
 	
+	// when a hitman dies it removes the compass from their drops
 	@EventHandler
 	public void cancelCompassDrop(PlayerDeathEvent event) {
 		Player player = (Player) event.getEntity();
@@ -70,20 +77,23 @@ public class Game implements Listener {
 		}
 	}
 	
+	// when a hitman respawns set their 8th slot to a compass
 	@EventHandler
-	public void survivorDeath(PlayerRespawnEvent event) {
+	public void hitmanRespawn(PlayerRespawnEvent event) {
 		Player player = (Player) event.getPlayer();
 		if (!player.getScoreboardTags().contains("h")) return;
 		player.getInventory().setItem(8, new ItemStack(Material.COMPASS));
 	}
 	
+	// when a survivor dies aka game over
 	@EventHandler
-	public void hunterRespawn(PlayerDeathEvent event) {
+	public void survivorDeath(PlayerDeathEvent event) {
 		Player player = (Player) event.getEntity();
 		if (!player.getScoreboardTags().contains("s")) return;
 		if (!GUIClick.game) return;
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			
+			// end the game and launch a firework
 			if (p.getScoreboardTags().contains("h")) {
 				p.sendMessage(ChatColor.GREEN + "You win!");
 				Firework firework = p.getWorld().spawn(p.getLocation(), Firework.class);
@@ -92,7 +102,6 @@ public class Game implements Listener {
 	            FireworkEffect effect = FireworkEffect.builder().flicker(true).withColor(Color.LIME).withFade(Color.LIME).with(Type.BALL).trail(true).build();
 	            m.addEffect(effect);
 				m.setPower(1);
-				m.setDisplayName("victory");
 				
 				firework.setFireworkMeta(m);
 				
@@ -101,10 +110,12 @@ public class Game implements Listener {
 			}
 		}
 		
+		// stop the game and kill the timer cycle
 		Bukkit.getScheduler().cancelTask(GUIClick.repeat);
 		GUIClick.game = false;
 	}
 	
+	// when a hitman drops a compass cancel the event
 	@EventHandler
 	public void onCompassDrop(PlayerDropItemEvent event) {
 		if (!event.getPlayer().getScoreboardTags().contains("h")) return;
@@ -114,6 +125,7 @@ public class Game implements Listener {
 		event.setCancelled(true);
 	}
 	
+	// when a hitman clicks the compass cancel the event
 	@EventHandler
 	public void onCompassMove(InventoryClickEvent event) {
 		try {if (!event.getClickedInventory().getType().equals(InventoryType.PLAYER)) return;} catch (Exception e) {}
@@ -124,8 +136,12 @@ public class Game implements Listener {
 		event.setCancelled(true);
 	}
 	
+	// when the hitman moves while the grace period is active, it cancels the event and tells them they can't move every 3 seconds by adding them to a list and scheduling a
+	// delayed task. then it removes them from the list and tells them again. done through a player list and not a variable to support multiple hitmen
 	@EventHandler
 	public void hitmanGraceMove(PlayerMoveEvent event) {
+		g = (Main.getData().get("data.g") == null ? 0 : (int) Main.getData().get("data.g"));
+		if (g == 0) return;
 		if (!event.getPlayer().getScoreboardTags().contains("h")) return;
 		if (GUIClick.gt > -1 && GUIClick.game) {
 			if (event.getFrom().getX() != event.getTo().getX() || event.getFrom().getZ() != event.getTo().getZ()) {
@@ -146,8 +162,11 @@ public class Game implements Listener {
 		}
 	}
 	
+	// disables hitmen damaging entities during grace period
 	@EventHandler
 	public void hitmanGraceHit(EntityDamageByEntityEvent event) {
+		g = (Main.getData().get("data.g") == null ? 0 : (int) Main.getData().get("data.g"));
+		if (g == 0) return;
 		if (!event.getDamager().getScoreboardTags().contains("h")) return;
 		if (GUIClick.gt > -1 && GUIClick.game) {
 			event.getDamager().sendMessage(ChatColor.RED + "You can't damage entities while in grace period!");
@@ -155,8 +174,11 @@ public class Game implements Listener {
 		}
 	}
 	
+	// disables hitmen placing blocks during grace period
 	@EventHandler
 	public void hitmanGracePlaceBlock(BlockPlaceEvent event) {
+		g = (Main.getData().get("data.g") == null ? 0 : (int) Main.getData().get("data.g"));
+		if (g == 0) return;
 		if (!event.getPlayer().getScoreboardTags().contains("h")) return;
 		if (GUIClick.gt > -1 && GUIClick.game) {
 			event.getPlayer().sendMessage(ChatColor.RED + "You can't place blocks while in grace period!");
@@ -164,8 +186,11 @@ public class Game implements Listener {
 		}
 	}
 	
+	// disables hitmen breaking blocks during grace period
 	@EventHandler
 	public void hitmanGraceBreakBlock(BlockBreakEvent event) {
+		g = (Main.getData().get("data.g") == null ? 0 : (int) Main.getData().get("data.g"));
+		if (g == 0) return;
 		if (!event.getPlayer().getScoreboardTags().contains("h")) return;
 		if (GUIClick.gt > -1 && GUIClick.game) {
 			event.getPlayer().sendMessage(ChatColor.RED + "You can't break blocks while in grace period!");
@@ -173,6 +198,7 @@ public class Game implements Listener {
 		}
 	}
 	
+	// makes the player unable to drop GUI items (marked with custom model data)
 	@EventHandler
 	public void onGUIItemDrop(PlayerDropItemEvent event) {
 		try {if (event.getItemDrop().getItemStack().getItemMeta().getCustomModelData() == 5426) {
@@ -180,12 +206,14 @@ public class Game implements Listener {
 		}} catch (Exception e) {}
 	}
 	
+	// kills the particle task and starts it again when someone joins for example when the server is empty
 	@EventHandler
 	public void restartParticles(PlayerJoinEvent event) {
 		Bukkit.getScheduler().cancelTask(Particles.p);
 		Particles.displayParticles(event.getPlayer());
 	}
 	
+	// disables firework damage; rn it disables all of it instead of just the victory one, might fix in the future but honestly seems unnecessary
 	@EventHandler
     public void onDamage(EntityDamageEvent event) {
         for(Entity entity : event.getEntity().getNearbyEntities(5, 5, 5)) {
@@ -196,6 +224,7 @@ public class Game implements Listener {
         }
     }
 	
+	// started on server start by Main, clears all GUI items from players (marked with custom model data)
 	public static void game() {
 		g = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), new Runnable() {
 			
