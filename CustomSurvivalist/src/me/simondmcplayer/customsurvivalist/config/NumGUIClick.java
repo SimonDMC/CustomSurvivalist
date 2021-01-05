@@ -22,7 +22,9 @@ public class NumGUIClick implements Listener {
 	public void onSelect(InventoryClickEvent event) {
 		if (!event.getInventory().equals(NumGUI.numinv)) return;
 		event.setCancelled(true);
-		if(event.getClickedInventory().getType() == InventoryType.PLAYER) return;
+		try {
+			if(event.getClickedInventory().getType() == InventoryType.PLAYER) return;
+		} catch (Exception e) {}
 		
 		// num is a string so it just adds the number to it (if it was an int then 5 += 1 would make 6 but as a string it makes 51)
 		if (event.getSlot() == 10) {

@@ -45,7 +45,9 @@ public class GUIClick implements Listener {
 	public void onSelect(InventoryClickEvent event) {
 		if (!event.getInventory().equals(GUI.inv)) return;
 		event.setCancelled(true);
-		if(event.getClickedInventory().getType() == InventoryType.PLAYER) return;
+		try {
+			if(event.getClickedInventory().getType() == InventoryType.PLAYER) return;
+		} catch (Exception e) {}
 		
 		// survivalist
 		if (event.getSlot() == 11) {

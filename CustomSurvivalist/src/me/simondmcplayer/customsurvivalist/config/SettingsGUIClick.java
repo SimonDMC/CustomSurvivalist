@@ -16,7 +16,9 @@ public class SettingsGUIClick implements Listener {
 	public void onSelect(InventoryClickEvent event) {
 		if (!event.getInventory().equals(SettingsGUI.settingsinv)) return;
 		event.setCancelled(true);
-		if(event.getClickedInventory().getType() == InventoryType.PLAYER) return;
+		try {
+			if(event.getClickedInventory().getType() == InventoryType.PLAYER) return;
+		} catch (Exception e) {}
 			if (event.getSlot() == 20) {
 				boolean on = (Main.getData().get("data.on") == null ? true : Main.getData().getBoolean("data.on"));
 				if (on)
