@@ -82,31 +82,41 @@ public class GUIClick implements Listener {
 		// these 5 open the num gui with their labels, see NumGUI and NumGUIClick for more info
 		if (event.getSlot() == 29) {
 			NumGUI.createNumInventory((Player) event.getWhoClicked(), "o1");
-			event.getWhoClicked().openInventory(NumGUI.numinv);
 		}
 		
 		if (event.getSlot() == 30) {
 			NumGUI.createNumInventory((Player) event.getWhoClicked(), "o2");
-			event.getWhoClicked().openInventory(NumGUI.numinv);
 		}
 		
 		if (event.getSlot() == 31) {
 			NumGUI.createNumInventory((Player) event.getWhoClicked(), "o3");
-			event.getWhoClicked().openInventory(NumGUI.numinv);
 		}
 		
 		if (event.getSlot() == 32) {
 			NumGUI.createNumInventory((Player) event.getWhoClicked(), "u1");
-			event.getWhoClicked().openInventory(NumGUI.numinv);
 		}
 		
 		if (event.getSlot() == 33) {
 			NumGUI.createNumInventory((Player) event.getWhoClicked(), "u2");
+		}
+
+		if (event.getSlot() >= 29 && event.getSlot() <= 33) {
+			if (!event.getWhoClicked().isOp()) {
+				event.getWhoClicked().sendMessage("§cYou don't have permission to do that.");
+				return;
+			}
 			event.getWhoClicked().openInventory(NumGUI.numinv);
+			return;
 		}
 		
 		// random loc
 		if (event.getSlot() == 39) {
+
+			if (!event.getWhoClicked().isOp()) {
+				event.getWhoClicked().sendMessage("§cYou don't have permission to do that.");
+				return;
+			}
+
 			int spawnNear = 0;
 			World w = event.getWhoClicked().getWorld();
 			if (Main.getData().get("data.spawnnear") != null)
@@ -146,6 +156,12 @@ public class GUIClick implements Listener {
 		
 		// timer/grace
 		if (event.getSlot() == 45) {
+
+			if (!event.getWhoClicked().isOp()) {
+				event.getWhoClicked().sendMessage("§cYou don't have permission to do that.");
+				return;
+			}
+
 			t = (Main.getData().get("data.t") == null ? 60 : (int) Main.getData().get("data.t"));
 			g = (Main.getData().get("data.g") == null ? 0 : (int) Main.getData().get("data.g"));
 			
@@ -227,6 +243,12 @@ public class GUIClick implements Listener {
 		
 		// start/stop
 		if (event.getSlot() == 40) {
+
+			if (!event.getWhoClicked().isOp()) {
+				event.getWhoClicked().sendMessage("§cYou don't have permission to do that.");
+				return;
+			}
+
 			// if game is not running rn it first sets up all the things like clearing inv, healing, saturating, etc.
 			if (!game) {
 				boolean glow = (Main.getData().get("data.glow") == null || Main.getData().getBoolean("data.glow"));
@@ -352,6 +374,12 @@ public class GUIClick implements Listener {
 		
 		// set location
 		if (event.getSlot() == 41) {
+
+			if (!event.getWhoClicked().isOp()) {
+				event.getWhoClicked().sendMessage("§cYou don't have permission to do that.");
+				return;
+			}
+
 			long l1 = Math.round(Math.floor(event.getWhoClicked().getLocation().getX()));  	
 			int i1=(int)l1;
 			long l2 = Math.round(Math.floor(event.getWhoClicked().getLocation().getZ()));  	
@@ -391,6 +419,10 @@ public class GUIClick implements Listener {
 		
 		// settings, just sets up the settings gui and opens it for the player
 		if (event.getSlot() == 53) {
+			if (!event.getWhoClicked().isOp()) {
+				event.getWhoClicked().sendMessage("§cYou don't have permission to do that.");
+				return;
+			}
 			SettingsGUI.createInventory((Player) event.getWhoClicked());
 			event.getWhoClicked().openInventory(SettingsGUI.settingsinv);
 		}
