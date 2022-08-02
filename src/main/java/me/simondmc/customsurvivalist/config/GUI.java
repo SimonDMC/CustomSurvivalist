@@ -176,9 +176,9 @@ public class GUI {
 		i = new ItemStack(Material.CAMPFIRE);
 		m.setDisplayName(ChatColor.YELLOW + "Set Center to a Random Location");
 		l.clear();
-		l.add(ChatColor.translateAlternateColorCodes('&', "&7Teleport to a random"));
-		l.add(ChatColor.translateAlternateColorCodes('&', "&7location and set the"));
-		l.add(ChatColor.translateAlternateColorCodes('&', "&7center there!"));
+		l.add(ChatColor.translateAlternateColorCodes('&', "&7Teleport to a random location"));
+		l.add(ChatColor.translateAlternateColorCodes('&', "&7based on the spawn filter and"));
+		l.add(ChatColor.translateAlternateColorCodes('&', "&7set the center there."));
 		l.add(ChatColor.translateAlternateColorCodes('&', "&7"));
 		l.add(ChatColor.translateAlternateColorCodes('&', "&eClick to teleport!"));
 		m.setLore(l);
@@ -227,16 +227,16 @@ public class GUI {
 		l.add(ChatColor.translateAlternateColorCodes('&', "&7Open a submenu for various"));
 		l.add(ChatColor.translateAlternateColorCodes('&', "&7toggles, such as disabling"));
 		l.add(ChatColor.translateAlternateColorCodes('&', "&7boundary checks, glowing,"));
-		l.add(ChatColor.translateAlternateColorCodes('&', "&7particles and more."));
+		l.add(ChatColor.translateAlternateColorCodes('&', "&7spawn filters and more."));
 		l.add(ChatColor.translateAlternateColorCodes('&', "&7"));
 		l.add(ChatColor.translateAlternateColorCodes('&', "&eClick to open!"));
 		m.setLore(l);
 		i.setItemMeta(m);
 		inv.setItem(53, i);
 		
-		// credits, will most likely change soon
+		// credits
 		i = new ItemStack(Material.NAME_TAG);
-		m.setDisplayName(ChatColor.YELLOW + "Plugin by simondmc");
+		m.setDisplayName(ChatColor.YELLOW + "Plugin by SimonDMC");
 		l.clear();
 		l.add(ChatColor.translateAlternateColorCodes('&', "&7Click to get links to my"));
 		l.add(ChatColor.translateAlternateColorCodes('&', "&7YouTube and Github."));

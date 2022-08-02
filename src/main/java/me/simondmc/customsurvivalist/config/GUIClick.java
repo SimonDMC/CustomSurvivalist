@@ -1,13 +1,10 @@
 package me.simondmc.customsurvivalist.config;
 
+import jdk.internal.net.http.common.Utils;
 import me.simondmc.customsurvivalist.game.RoleControl;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
+import me.simondmc.customsurvivalist.game.Util;
+import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -108,9 +105,43 @@ public class GUIClick implements Listener {
 			event.getWhoClicked().openInventory(NumGUI.numinv);
 		}
 		
-		// random loc - moved to its own function as i need to loop it in case it spawns in a bad loc
+		// random loc
 		if (event.getSlot() == 39) {
-			randomSpread((Player) event.getWhoClicked());
+			int spawnNear = 0;
+			World w = event.getWhoClicked().getWorld();
+			if (Main.getData().get("data.spawnnear") != null)
+				spawnNear = Main.getData().getInt("data.spawnnear");
+			switch (spawnNear) {
+				case 0:
+					randomSpread((Player) event.getWhoClicked());
+					break;
+				case 1:
+					int structure = (Main.getData().get("data.structure") != null ? Main.getData().getInt("data.structure") : 0);
+					Location struc = w.locateNearestStructure(Util.getRandomLocation(w), SettingsGUI.structures[structure], 3200, true);
+
+					// if no structure within range found spawn randomly
+					if (struc == null) {
+						event.getWhoClicked().sendMessage(ChatColor.RED + "Couldn't locate a " + Util.formatString(SettingsGUI.structures[structure].getName()) + " near you.");
+						randomSpread((Player) event.getWhoClicked());
+					} else {
+						struc.setY(w.getHighestBlockYAt(struc)+1);
+						event.getWhoClicked().teleport(struc);
+						Util.postTP((Player) event.getWhoClicked());
+					}
+					break;
+				case 2:
+					Location ocean = Util.getOcean(w);
+					// if no ocean within range found spawn randomly
+					if (ocean == null) {
+						event.getWhoClicked().sendMessage(ChatColor.RED + "Couldn't locate an ocean.");
+						randomSpread((Player) event.getWhoClicked());
+					} else {
+						event.getWhoClicked().teleport(ocean);
+						Util.postTP((Player) event.getWhoClicked());
+					}
+					break;
+			}
+
 		}
 		
 		// timer/grace
@@ -215,6 +246,12 @@ public class GUIClick implements Listener {
 							player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 1000000, 0));
 					} else if (RoleControl.getRole(player).equals("hitman")) {
 						player.getInventory().setItem(8, new ItemStack(Material.COMPASS));
+						// if weakness enabled, give hunters weakness for duration of grace period
+						boolean weakness = (Main.getData().get("data.weakness") == null || Main.getData().getBoolean("data.weakness"));
+						if (weakness) {
+							g = (Main.getData().get("data.g") == null ? 0 : (int) Main.getData().get("data.g"));
+							player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, g*20, 4));
+						}
 					} else {
 						player.setGameMode(GameMode.SPECTATOR);
 					}
@@ -236,74 +273,69 @@ public class GUIClick implements Listener {
 				m = (Main.getData().get("data.t") == null ? 60 : (int) Main.getData().get("data.t"));
 				event.getWhoClicked().getWorld().setTime(1000);
 				
-				// didnt figure out how to reset advancements through api so i just dispatch a command
+				// couldnt figure out how to reset advancements through api so i just dispatch a command
 				event.getWhoClicked().getWorld().setGameRuleValue("sendCommandFeedback", "false");
 				Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "advancement revoke @a everything");
 				event.getWhoClicked().getWorld().setGameRuleValue("sendCommandFeedback", "true");	
 				Bukkit.getScheduler().cancelTask(repeat);
 					
 				// this is where the timer logic begins
-				repeat = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), new Runnable() {
-						
-					@Override
-					public void run() {
-						
-						// reset for minutes (1:00 -> 0:59)
-						if (s == -1) {
-							s = 59;
-							m--;
-						}
-							
-						// when timer ends stop the game
-						if (s == 0 && m == 0) {
-							Bukkit.getScheduler().cancelTask(repeat);
-							for (Player p : Bukkit.getOnlinePlayers()) {
-								
-								if (RoleControl.getRole(p).equals("survivalist")) {
-									p.sendMessage(ChatColor.GREEN + "You win!");
-									
-									// setting up the firework and launching it at the player's position
-									Firework firework = p.getWorld().spawn(p.getLocation(), Firework.class);
-									FireworkMeta m = firework.getFireworkMeta();
-						           
-						            FireworkEffect effect = FireworkEffect.builder().flicker(true).withColor(Color.LIME).withFade(Color.LIME).with(Type.BALL_LARGE).trail(true).build();
-						            m.addEffect(effect);
-									m.setPower(4);
-									
-									firework.setFireworkMeta(m);
-									
-									// set the game back to false so you can start it through gui
-									game = false;
-									
-								} else {
-									p.sendMessage(ChatColor.RED + "Survivalist wins!");
-								}
-							}
-						}
-						
-						// formatting (0:5 -> 0:05)
-						String s0 = (s < 10 ? "0" : "") + s;
-						
-						// check if showtimer is on
-						boolean showtimer = (Main.getData().get("data.showtimer") == null || Main.getData().getBoolean("data.showtimer"));
-						for (Player p : Bukkit.getOnlinePlayers()) {
-							if (showtimer) {
-								
-								// check for grace period and display message with color accordingly
-								if (gt > 0) {
-									p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.AQUA + String.valueOf(m) + ":" + s0));
-								} else {
-									p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + String.valueOf(m) + ":" + s0));
-								}
-							}
-						}
-						
-						// remove seconds and grace timer each second to progress timer
-						s--;
-						gt--;
+				// run every 20 ticks = second
+				repeat = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), () -> {
+
+					// reset for minutes (1:00 -> 0:59)
+					if (s == -1) {
+						s = 59;
+						m--;
 					}
-						
-					// run every 20 ticks = second
+
+					// when timer ends stop the game
+					if (s == 0 && m == 0) {
+						Bukkit.getScheduler().cancelTask(repeat);
+						for (Player p : Bukkit.getOnlinePlayers()) {
+
+							if (RoleControl.getRole(p).equals("survivalist")) {
+								p.sendMessage(ChatColor.GREEN + "You win!");
+
+								// setting up the firework and launching it at the player's position
+								Firework firework = p.getWorld().spawn(p.getLocation(), Firework.class);
+								FireworkMeta m = firework.getFireworkMeta();
+
+								FireworkEffect effect = FireworkEffect.builder().flicker(true).withColor(Color.LIME).withFade(Color.LIME).with(Type.BALL_LARGE).trail(true).build();
+								m.addEffect(effect);
+								m.setPower(4);
+
+								firework.setFireworkMeta(m);
+
+								// set the game back to false so you can start it through gui
+								game = false;
+
+							} else {
+								p.sendMessage(ChatColor.RED + "Survivalist wins!");
+							}
+						}
+					}
+
+					// formatting (0:5 -> 0:05)
+					String s0 = (s < 10 ? "0" : "") + s;
+
+					// check if showtimer is on
+					boolean showtimer = (Main.getData().get("data.showtimer") == null || Main.getData().getBoolean("data.showtimer"));
+					for (Player p : Bukkit.getOnlinePlayers()) {
+						if (showtimer) {
+
+							// check for grace period and display message with color accordingly
+							if (gt > 0) {
+								p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.AQUA + String.valueOf(m) + ":" + s0));
+							} else {
+								p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + String.valueOf(m) + ":" + s0));
+							}
+						}
+					}
+
+					// remove seconds and grace timer each second to progress timer
+					s--;
+					gt--;
 				}, 0, 20);
 				
 				// if clicked while game is on
@@ -363,17 +395,17 @@ public class GUIClick implements Listener {
 			event.getWhoClicked().openInventory(SettingsGUI.settingsinv);
 		}
 		
-		// credits, as i said will be probably reworked/changed
+		// credits
 		if (event.getSlot() == 0) {
 			TextComponent message = new TextComponent("YouTube");
 			message.setColor(ChatColor.RED);
-			message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtube.com/simondmc"));
+			message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtube.com/SimonDMC"));
 			message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click")));
 			event.getWhoClicked().spigot().sendMessage(message);
 			
 			message = new TextComponent("Github");
 			message.setColor(ChatColor.DARK_GRAY);
-			message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/simondmc"));
+			message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/SimonDMC"));
 			message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click")));
 			event.getWhoClicked().spigot().sendMessage(message);
 			
@@ -383,56 +415,15 @@ public class GUIClick implements Listener {
 	
 	// fires when you click random loc
 	public void randomSpread(Player player) {
-		
-		// first it gets two random numbers from 0 to 200000
-		double r1 = Math.floor(Math.random() * 200000);
-		double r2 = Math.floor(Math.random() * 200000);
-		Location l = player.getLocation();
-		
-		// then it teleports you to that minus 100000 aka somewhere inbetween -100000 and 100000 on both x and z
-		l.setX(r1-100000);
 
-		// sets y to the highest block at that position
-		l.setY(player.getWorld().getHighestBlockYAt((int)r1-100000, (int)r2-100000)+1);
-		l.setZ(r2-100000);
-		player.teleport(l);
-		
-		l1 = Math.round(Math.floor(player.getLocation().getX()));
-		i1=(int)l1;
-		l2 = Math.round(Math.floor(player.getLocation().getZ()));  	
-		i2=(int)l2;
-		
-		// gives resistance to combat fall damage, easier than disabling it
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			p.teleport(player.getLocation());
-			p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 4));
-		}
+		player.teleport(Util.getRandomLocation(player.getWorld()));
 		
 		// this is a water checker - checks if there is water below you, and if so, runs randomspread again, hence why it's in its own function
 		if (player.getLocation().add(0, -1, 0).getBlock().getType().equals(Material.WATER)) {
 			randomSpread(player);
 			return;
 		}
-		
-		// if it passes through checkers it does the rest, similar to set spawn except one thing
-		Main.getData().set("data.cx", i1);
-		Main.getData().set("data.cz", i2);
-		Main.saveData();
-		player.sendMessage(ChatColor.GREEN + "Set the center to " + Math.round(Math.floor(player.getLocation().getX())) + ", " + Math.round(Math.floor(player.getLocation().getZ())) + "!");
-		player.getWorld().setGameRuleValue("sendCommandFeedback", "false");
-		Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(),
-				"spawnpoint @a " + Math.round(Math.floor(player.getLocation().getX())) + " " +
-						Math.round(Math.floor(player.getLocation().getY())) + " " +
-						Math.round(Math.floor(player.getLocation().getZ())));
-		player.getWorld().setGameRuleValue("sendCommandFeedback", "true");
-		Bukkit.getWorld(player.getWorld().getName()).setSpawnLocation(player.getLocation());
-		
-		game = false;
-		Bukkit.getScheduler().cancelTask(repeat);
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			p.removePotionEffect(PotionEffectType.GLOWING);
-		}
-		
-		player.closeInventory();
+
+		Util.postTP(player);
 	}
 }
